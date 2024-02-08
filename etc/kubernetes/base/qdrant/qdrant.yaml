@@ -113,20 +113,20 @@ spec:
         app.kubernetes.io/name: camel-ai-qdrant
         app.kubernetes.io/instance: camel-ai-qdrant
     spec:
-      initContainers:
-      - name: ensure-storage-dir-ownership
-        image: "docker.io/qdrant/qdrant:v1.7.3"
-        command:
-          - chown
-          - -R
-          - 1000:3000
-          - /qdrant/storage
-        volumeMounts:
-          - name: camel-ai-qdrant-storage
-            mountPath: /qdrant/storage
+      #initContainers:
+      #- name: ensure-storage-dir-ownership
+      #  image: "docker.io/qdrant/qdrant:v1.7.4-unprivileged"
+      #  command:
+      #    - chown
+      #    - -R
+      #    - 1000:3000
+      #    - /qdrant/storage
+      #  volumeMounts:
+      #    - name: camel-ai-qdrant-storage
+      #      mountPath: /qdrant/storage
       containers:
         - name: camel-ai-qdrant
-          image: "docker.io/qdrant/qdrant:v1.7.3"
+          image: "docker.io/qdrant/qdrant:v1.7.4-unprivileged"
           imagePullPolicy: IfNotPresent
           env:
             - name: camel-ai-qdrant_INIT_FILE_PATH
@@ -156,9 +156,9 @@ spec:
           resources:
             {}
           securityContext:
-            #allowPrivilegeEscalation: false
+            allowPrivilegeEscalation: false
             privileged: false
-            #readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: true
             #runAsGroup: 2000
             runAsNonRoot: true
             #runAsUser: 1000
@@ -179,9 +179,9 @@ spec:
             mountPath: /qdrant/snapshots
           - name: camel-ai-qdrant-init
             mountPath: /qdrant/init
-      securityContext:
-        fsGroup: 3000
-        fsGroupChangePolicy: Always
+      #securityContext:
+      #  fsGroup: 3000
+      #  fsGroupChangePolicy: Always
       serviceAccountName: camel-ai-qdrant
       volumes:
         - name: camel-ai-qdrant-config
