@@ -1,0 +1,72 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: camel-ai-db-volume-claim
+  labels:
+    app: camel-ai-db
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10G
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: camel-ai-db
+spec:
+  type: NodePort
+  ports:
+    - port: 5432
+      protocol: TCP
+      targetPort: 5432
+  selector:
+    app: camel-ai-db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camel-ai-db
+  labels:
+    app: camel-ai-db
+spec:
+  selector:
+    matchLabels:
+      app: camel-ai-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: camel-ai-db
+    spec:
+      volumes:
+      - name: camel-ai-db-volume
+        persistentVolumeClaim:
+          claimName: camel-ai-db-volume-claim
+      containers:
+      - name: camel-ai-db
+        image: "postgres:13"
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: camel-ai-db
+              key: db.user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: camel-ai-db
+              key: db.password
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: camel-ai-db
+              key: db.name
+        volumeMounts:
+        - name: camel-ai-db-volume
+          mountPath: /var/lib/postgresql
+          subPath: data
