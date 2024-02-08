@@ -193,7 +193,9 @@ spec:
         - name: camel-ai-qdrant-init
           emptyDir: {}
   volumeClaimTemplates:
-    - metadata:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
         name: camel-ai-qdrant-storage
         labels:
           app: camel-ai-qdrant
