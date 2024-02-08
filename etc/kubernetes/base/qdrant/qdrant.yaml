@@ -156,12 +156,12 @@ spec:
           resources:
             {}
           securityContext:
-            allowPrivilegeEscalation: false
+            #allowPrivilegeEscalation: false
             privileged: false
-            readOnlyRootFilesystem: true
-            runAsGroup: 2000
+            #readOnlyRootFilesystem: true
+            #runAsGroup: 2000
             runAsNonRoot: true
-            runAsUser: 1000
+            #runAsUser: 1000
           lifecycle:
             preStop:
               exec:
